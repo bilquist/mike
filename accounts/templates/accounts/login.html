@@ -1,0 +1,71 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Login - MichaelHatheway{% endblock %}
+
+{% block header %}
+	<link href="{% static 'mike/base/css/accounts/login.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block main_content %}
+	<div class="container">
+		<!-- Default form register -->
+		<div class="row text-center">
+			<div class="col-12 col-md-6 offset-md-3">
+				<form class="mt-4" method="POST" action="{% url 'login' %}">
+					
+					<p class="signup-header">Login</p>
+					<p class="signup-subheader">Access your account</p>
+					
+					{% csrf_token %}
+					{{ form.email }}
+					<input type="hidden" name="next" value="{{ next }}">
+					{% for field in form %}
+						{% if field.name != 'email' %}
+							<div class="form-row mb-4">
+								<input type="{{ field.field.widget.input_type }}"
+									   id="{{ field.id_for_label }}"
+									   name="{{ field.html_name }}"
+									   maxlength="{{ field.field.max_length }}"
+									   class="form-control {% if field.errors %}is-invalid{% endif %}"
+									   aria-describedby="{{ field.help_text }}"
+									   placeholder="{{ field.label }}"
+									   {% if field.value and field.name != 'password' %}value="{{ field.value }}"{% endif %}
+								>
+								<ul class="errorlist text-danger list-unstyled mb-0">
+									{% for error in field.errors %}
+										<li>{{ error|escape }}</li>
+									{% endfor %}
+								</ul>
+							</div>
+						{% endif %}
+					{% endfor %}
+					<div class="form-row">
+						<ul class="errorlist nonfield text-danger">
+							{% for error in form.non_field_errors %}
+								<li>{{ error|escape }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div class="form-row align-items-center mb-2">
+						<div class="col-2 col-md-2"></div>
+						<div class="col-8 col-md-8">
+							<button id="id_login_btn"
+									class="btn btn-primary btn-block shadow btn-lg"
+									type="submit"
+									>Login</button>
+						</div>
+						<div class="col-2 col-md-2"></div>
+					</div>
+					<div class="form-row align-items-center mb-2">
+						<div class="col-12 col-md-12">
+							<span class="text-center small">
+								<a href="{% url 'accounts:forgot_password' %}">Forgot password?</a> | <span class="text-center">New to MichaelHatheway? <a href="{% url 'signup' %}">Visit the homepage >></a>
+							</span>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}

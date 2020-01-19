@@ -1,0 +1,12 @@
+*.secret
+geckodriver.log
+venv/
+__pycache__/
+static/
+functional_tests/
+screendumps/
+dev_resources/
+media/
+fixtures/
+secrets/
+*.pem

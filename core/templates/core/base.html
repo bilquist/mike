@@ -1,0 +1,119 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{% block title %}Mike's Night! Perfect your 2020{% endblock %}</title>
+		<link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+		<link href="{% static 'base.css' %}" rel="stylesheet">
+		<link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+		{% block header %}{% endblock %}
+	</head>
+	
+	<body>
+		<div class="container-fullwidth" id="gradient-background">
+		
+		{% block navbar_container %}
+			<div class="container-fluid fluid-navbar-extension">
+				
+				<div class="container">
+				
+					<nav class="navbar navbar-expand-md">
+						<!-- Brand -->
+						<a class="navbar-brand" href="{% url 'home' %}">Michael Hatheway</a>
+						
+						<!-- Toggler/collapible Button -->
+						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+							<!--<span class="navbar-toggler-icon"></span>-->
+						</button>
+						
+						<!-- Navbar links -->
+						<div class="collapse navbar-collapse" id="collapsibleNavbar">
+							<ul class="navbar-nav ml-auto">
+								{% if user.is_authenticated %}
+								<!-- Settings for medium+ screens -->
+								<li class="nav-item d-none d-md-block">
+									<a class="nav-link" name="user_settings" href="{% url 'accounts:account_settings' %}">Settings</a>
+								</li>
+								<!-- Settings for small- screens -->
+								<li class="nav-item dropdown hidden-md-down d-md-none">
+									<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Settings
+									</a>
+									<div class="dropdown-menu dropdown-menu-settings">
+										<a class="dropdown-item dropdown-item-settings pl-2" name="account_settings" href="{% url 'accounts:account_profile' %}">Profile</a>
+										<a class="dropdown-item dropdown-item-settings pl-2" name="account_settings" href="{% url 'accounts:account_settings' %}">Account</a>
+										<a class="dropdown-item dropdown-item-settings pl-2" name="account_settings" href="{% url 'accounts:account_devices' %}">Mobile</a>
+										<a class="dropdown-item dropdown-item-settings pl-2" name="account_settings" href="{% url 'accounts:account_password' %}">Password</a>
+										<div class="dropdown-divider"></div>
+									</div>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" name="logout" href="{% url 'logout' %}">Log out</a>
+								</li>
+								{% else %}
+								<li class="nav-item">
+									<a class="nav-link" name="signup" href="{% url 'signup' %}">Sign up</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" name="login" href="{% url 'login' %}">Log in</a>
+								</li>
+								{% endif %}
+							</ul>
+						</div>
+					</nav>
+				</div>
+			</div>
+			
+			<div class="container">
+				{% block secondary_navbar %}{% endblock %}
+				
+				<!-- Messages Displayed Here -->
+				{% if messages %}
+					{% for message in messages %}
+						{% if message.level_tag == 'success' %}
+							<div class="alert alert-success text-center">{{ message }}</div>
+						{% elif message.level_tag == 'error' %}
+							<div class="alert alert-danger text-center">{{ message }}</div>
+						{% else %}
+							<div class="alert alert-warning text-center">{{ message }}</div>
+						{% endif %}
+					{% endfor %}
+				{% endif %}
+					
+					
+				<!-- Check for alert about email verification -->
+				{% if user.is_authenticated and not user.is_email_verified %}
+					<div id="verify_email_alert" class="alert alert-info text-center">
+						Confirm your email address to access all MichaelHatheway's features. 
+						A verification email was sent to {{ user.email }}. 
+						<a href="{% url 'accounts:resend_email_verification' %}">Help?</a>
+					</div>
+				{% endif %}
+			
+			</div>
+			
+		{% endblock %}
+		
+		{% block main_content %}
+			<div class="container">
+				<span name="delete-me">THIS IS MIKE'S NIGHT!</span>
+			</div>
+		{% endblock %}
+		
+		</div>
+		
+	</body>
+	
+	
+	<script src="{% static 'jquery-3.3.1.min.js' %}"></script>
+	<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+	{% block javascript %}{% endblock %}
+	<script src="{% static 'mike\base\scripts\gradient.js' %}"></script>
+
+</html>

@@ -1,0 +1,157 @@
+{% extends 'accounts/accounts_base.html' %}
+
+{% block main_content %}
+	<div class="container">
+		<!-- Default form register -->
+		<div class="row text-center">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<p class="h4 text-center mt-2 mb-4">Edit Profile</p>
+				
+				<!-- avatar form -->
+				<form class="text-center p-2" id="avatar-form" method="POST" action="{% url 'accounts:account_avatar_upload' %}" enctype='multipart/form-data'>
+					{% csrf_token %}
+					<div class="form-row mb-4">
+						<div class="col-4 offset-4 col-md-6 offset-md-3 col-lg-4 offset-lg-0">
+							<img class="img-fluid img-thumbnail float-left" id="user-avatar-tb" src="{{ user.avatar.url }}" aria-describedby="user-avatar">
+						</div>
+						
+						<div class="col-12 col-lg-8">
+							<div class="text-center text-lg-left ml-lg-4" id="avatar-text">
+								<div class="col-form-label h4">{{ avatar_form.avatar.label }}</div>
+								<div class="d-xs-block d-sm-block d-md-none d-lg-none col-8 offset-2">
+									<small>Maximum image size is 15 MB. Images will be cropped to 200 x 200 pixels.</small>
+								</div>
+								<div class="d-none d-md-block d-lg-block">
+									<small>Maximum image size is 15 MB. Images will be cropped to 200 x 200 pixels.</small>
+								</div>
+								<input type="{{ avatar_form.avatar.field.widget.input_type }}"
+									   id="{{ avatar_form.avatar.id_for_label }}"
+									   name="{{ avatar_form.avatar.html_name }}"
+									   class="form-control {% if avatar_form.avatar.errors %}is-invalid{% endif %} border-0 pl-0"
+									   aria-describedby="{{ avatar_form.avatar.help_text }}"
+									   accept="image/*"
+								>
+								<ul id="avatar-error-list" class="errorlist text-danger list-unstyled mb-0">
+									{% for error in avatar_form.avatar.errors %}
+										<li>{{ error|escape }}</li>
+									{% endfor %}
+								</ul>
+								<div class="ml-0 pl-0 col-6">
+										<button id="id_send_email_btn"
+												class="btn btn-primary btn-block shadow btn-sm"
+												type="submit"
+										>Upload</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+				
+				<!-- non avatar form -->
+				<form class="text-center p-2" id="account-profile-form" method="POST" action="{% url 'accounts:account_profile' %}">
+					{% csrf_token %}
+					{% for field in account_profile_form %}
+						<div class="form-row mb-4">
+							<div class="col-12 col-md-4 col-form-label text-left">{{ field.label }}</div>
+							<div class="col-12 col-md-8">
+								{% if field.field.widget.input_type == 'select' %}
+									<select id="{{ field.id_for_label }}"
+											name="{{ field.html_name }}"
+											class="form-control {% if field.errors %}is-invalid{% endif %}"
+											aria-describedby="{{ field.help_text }}"
+									>
+										{% for value, choice in field.field.widget.choices %}
+											{% if field.value == value %}
+												<option value="{{ value }}" selected="selected">{{ choice }}</option>
+											{% else %}
+												<option value="{{ value }}">{{ choice }}</option>
+											{% endif %}
+										{% endfor %}
+									</select>
+								{% elif field.name == 'bio' %}
+									<textarea id="{{ field.if_for_label }}"
+											  name="{{ field.html_name }}"
+											  class="form-control {% if field.errors %}is-invalid{% endif %}"
+											  aria-describedby="{{ field.help_text }}"
+											  rows="4"
+									>{% if field.value %}{{ field.value }}{% else %}{% endif %}</textarea>
+								{% else %}
+								<input type="{{ field.field.widget.input_type }}"
+									   id="{{ field.id_for_label }}"
+									   name="{{ field.html_name }}"
+									   maxlength="{{ field.field.max_length }}"
+									   class="form-control {% if field.errors %}is-invalid{% endif %}"
+									   value="{{ field.value|default_if_none:'' }}"
+									   aria-describedby="{{ field.help_text }}"
+								>
+								{% endif %}
+								<ul class="errorlist text-danger list-unstyled mb-0">
+									{% for error in field.errors %}
+										<li>{{ error|escape }}</li>
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+					{% endfor %}
+					<div class="form-row">
+						<ul class="errorlist nonfield text-danger">
+							{% for error in form.non_field_errors %}
+								<li>{{ error|escape }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div class="form-row align-items-center mb-2">
+						<div class="col-2 col-md-2"></div>
+						<div class="col-8 col-md-8">
+							<button id="id_send_email_btn"
+									class="btn btn-primary btn-block shadow btn-lg mb-4"
+									type="submit"
+									>Save</button>
+						</div>
+						<div class="col-2 col-md-2"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+
+{% block javascript %}
+	<script type="text/javascript">
+		// Avatar ajax upload
+		var avatarForm = $('#avatar-form');
+		avatarForm.on('submit', function(event) {
+			event.preventDefault();
+			var formData = new FormData(this);
+			$.ajax({
+				type: avatarForm.attr("method"),
+				url: avatarForm.attr("action"),
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+				success: function(data) {
+					if (data["success"]) {
+						document.getElementById('user-avatar-tb').src = data['img_src'];
+					} else {
+						display_form_errors('avatar-error-list', data['errors']);
+						document.getElementById("{{ avatar_form.avatar.id_for_label }}").classList.add("is-invalid");
+					}
+				},
+				error: function(data) {
+				}
+			});
+			return false; // to avoid actual submission of the form
+		});
+		
+		function display_form_errors(id, errors) {
+			error_string = "";
+			Object.keys(errors).forEach(function (errorKey) {
+				error_string += "<li>" + errors[errorKey] + "</li>";			
+			});
+			document.getElementById(id).innerHTML = error_string;
+		};
+	</script>	
+{% endblock %}

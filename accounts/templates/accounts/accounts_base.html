@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block header %}
+	<link href="{% static 'mike/base/css/accounts/account_settings_base.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block secondary_navbar %}
+	<div class="container d-none d-md-block d-lg-block d-xl-block">
+		<nav class="navbar navbar-expand-md secondary_navbar">
+			<ul class="navbar-nav mx-auto">
+				<li class="nav-item">
+					<a href="{% url 'accounts:account_settings' %}" class="nav-link" id="nav_account">Account</a>
+				</li>
+				<li class="nav-item">
+					<a href="{% url 'accounts:account_profile' %}" class="nav-link" id="nav_account">Profile</a>
+				</li>
+				<li class="nav-item">
+					<a href="{% url 'accounts:account_devices' %}" class="nav-link" id="nav_account">Mobile</a>
+				</li>
+				<li class="nav-item">
+					<a href="{% url 'accounts:account_password' %}" class="nav-link" id="nav_account">Password</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+{% endblock %}
+
+{% block javascript %}
+	<script type="text/javascript">
+		my_object = $("[id='nav_account']").toArray();
+		for (var ii=0; ii < my_object.length; ii++) {
+			if (my_object[ii].href == window.location.href) {
+				my_object[ii].href = "javascript:void(0);";
+				my_object[ii].style.textDecoration = "none";
+				my_object[ii].style.fontWeight = "bold";
+			}
+		}
+		/*
+		for (ii=0; i < $("[id='nav_account']").length; i++) {
+			if 
+		console.log(window.location.href);
+		*/
+	</script>
+{% endblock %}
+

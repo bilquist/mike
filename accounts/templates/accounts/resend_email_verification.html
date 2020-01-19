@@ -1,0 +1,74 @@
+{% extends 'accounts/accounts_base.html' %}
+
+{% block main_content %}
+	{% if is_user_email_verified %}
+		<div class="container">
+			<div class="row text-center">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<p class="h4">Resend Email Verification</p>
+					<p class="h6 mb-4 text-justify">
+						Your email address, {{ user.email }}, has already been verified. Please navigate
+						to your user preferences to update your email address.
+					</p>
+				</div>
+				<div class="col-md-3"></div>
+			</div>
+		</div>
+	{% else %}
+		<div class="container">
+			<!-- Default form register -->
+			<div class="row text-center">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<form class="text-center" method="POST" action="{% url 'accounts:resend_email_verification' %}">
+						
+						<p class="h4">Resend Email Verification</p>
+						<p class="h6 mb-4 text-justify">
+							An email was sent to {{ user.email }}. If this is not the correct address, 
+							please update it prior to resending your email verification. This will 
+							update the address associated with your account.
+						</p>
+					
+						{% csrf_token %}
+						{% for field in form %}
+							<div class="form-row mb-4">
+								<input type="{{ field.field.widget.input_type }}"
+									   id="{{ field.id_for_label }}"
+									   name="{{ field.html_name }}"
+									   maxlength="{{ field.field.max_length }}"
+									   class="form-control {% if field.errors %}is-invalid{% endif %}"
+									   aria-describedby="{{ field.help_text }}"
+									   value="{{ user.email }}"
+								>
+								<ul class="errorlist text-danger list-unstyled mb-0">
+									{% for error in field.errors %}
+										<li>{{ error|escape }}</li>
+									{% endfor %}
+								</ul>
+							</div>
+						{% endfor %}
+						<div class="form-row">
+							<ul class="errorlist nonfield text-danger">
+								{% for error in form.non_field_errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+						<div class="form-row align-items-center mb-2">
+							<div class="col-2 col-md-2"></div>
+							<div class="col-8 col-md-8">
+								<button id="id_send_email_btn"
+										class="btn btn-primary btn-block shadow btn-lg"
+										type="submit"
+										>Send Verification Email</button>
+							</div>
+							<div class="col-2 col-md-2"></div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}
+
