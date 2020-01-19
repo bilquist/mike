@@ -8,4 +8,5 @@ screendumps/
 dev_resources/
 media/
 fixtures/
+secrets/
 *.pem
