@@ -65,7 +65,7 @@ class StaticStorage(S3Boto3Storage):
 		if hasattr(self, 'cloudfront') and self.cloudfront == True:
 			name = self._normalize_name(self._clean_name(name))
 			path = filepath_to_uri(name)
-			cloudfront_url = self.cloudfront_params.get('cloudfront_url') or setting('CLOUDFRONT_URL', None)
+			cloudfront_url = setting('CLOUDFRONT_URL', self.cloudfront_params.get('cloudfront_url'))
 			url = generate_signed_cloudfront_url(
 				path=path, 
 				cloudfront_url=cloudfront_url,
@@ -77,14 +77,14 @@ class StaticStorage(S3Boto3Storage):
 	
 	
 
-class PublicMediaStorage(S3Boto3Storage):
-	location = settings.AWS_PUBLIC_MEDIA_LOCATION
+class AWSMediaStorage(S3Boto3Storage):
+	location = settings.AWS_MEDIA_LOCATION
 	file_overwrite = False
 	cloudfront = True
 	cloudfront_params = {}
 	
 	def __init__(self, *args, **kwargs):
-		super(PublicMediaStorage, self).__init__(*args, **kwargs)
+		super(AWSMediaStorage, self).__init__(*args, **kwargs)
 	
 	def url(self, name, parameters=None, expire=None):
 		if hasattr(self, 'cloudfront') and self.cloudfront == True:
@@ -98,6 +98,6 @@ class PublicMediaStorage(S3Boto3Storage):
 			)
 			return url
 		else:
-			return super(PublicMediaStorage, self).url(self, name, parameters, expire)
+			return super(AWSMediaStorage, self).url(self, name, parameters, expire)
 	
 	
