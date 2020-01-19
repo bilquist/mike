@@ -10,3 +10,4 @@ media/
 fixtures/
 secrets/
 *.pem
+*.env
