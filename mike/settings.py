@@ -189,15 +189,15 @@ STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, 'static'),
 	#'/var/www/static/',
 ]
-STATIC_URL = '/static/'
-#STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
-#STATICFILES_STORAGE = 'mike.storage_backends.StaticStorage'
+#STATIC_URL = '/static/'
+STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
+STATICFILES_STORAGE = 'mike.storage_backends.StaticStorage'
 
 # Media Settings
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-#MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_MEDIA_LOCATION)
-#DEFAULT_FILE_STORAGE = 'mike.storage_backends.AWSMediaStorage'
+#MEDIA_URL = '/media/'
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_MEDIA_LOCATION)
+DEFAULT_FILE_STORAGE = 'mike.storage_backends.AWSMediaStorage'
 
 
 
