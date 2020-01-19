@@ -1,0 +1,97 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Internet Strangers' Signup Page{% endblock %}
+
+{% block header %}
+	<link href="{% static 'mike/base/css/accounts/signup.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block main_content %}
+	<div class="container">
+
+		<!-- Default form register -->
+		<div class="row signup-header text-center">
+			<div class="col-12">Internet Stranger, claim your account!</div>
+		</div>
+		<div class="row signup-subheader text-center">
+			<div class="col-2"></div>
+			<div class="col-8">
+				We're throwing Michael a bachelor party. Sign up and contribute your suggestions, 
+				participate in voting, and help shape the fun!
+			</div>
+			<div class="col-2"></div>
+		</div>
+		<div class="row">
+			<div class="col-12 col-md-3"></div>
+			<div class="col-12 col-md-6">
+				<form class="signup-form" method="POST" action="{% url 'signup' %}">
+					{% csrf_token %}
+					{% for field in form %}
+						{% if field.name != 'tos_accepted' %}
+							<div class="form-row mb-4">
+								<input type="{{ field.field.widget.input_type }}"
+									   id="{{ field.id_for_label }}"
+									   name="{{ field.html_name }}"
+									   maxlength="{{ field.field.max_length }}"
+									   class="form-control {% if field.errors %}is-invalid{% endif %}"
+									   aria-describedby="{{ field.help_text }}"
+									   placeholder="{% if field.name == 'password1' %}Password (8+ characters){% else %}{{ field.label }}{% endif %}"
+									   {% if field.value and field.name != 'password1' and field.name != 'password2' %}value="{{ field.value }}"{% endif %}
+								/>
+								<ul class="errorlist text-danger list-unstyled mb-0">
+									{% for error in field.errors %}
+										<li>{{ error|escape }}</li>
+									{% endfor %}
+								</ul>
+							</div>
+						{% else %}
+							<div class="form-row">
+								<div class="col-12 ml-3 mb-2">
+									<input id="{{ field.id_for_label }}"
+										   name="{{ field.html_name }}"
+										   class="form-check-input {% if field.errors %}is-invalid{% endif %}"
+										   type="checkbox"
+										   aria-describedby="{{ field.help_text }}"
+									/>I am at least 18 years of age and accept the 
+									  <a href="{% url 'terms_and_conditions' %}">
+									  Terms and Conditions</a> herein.
+								</div>
+								<ul class="errorlist text-danger list-unstyled mb-0">
+									{% for error in field.errors %}
+										<li>{{ error|escape }}</li>
+									{% endfor %}
+								</ul>
+							</div>
+						{% endif %}
+					{% endfor %}
+					<div class="form-row">
+						<ul class="errorlist nonfield text-danger">
+							{% for error in form.non_field_errors %}
+								<li>{{ error|escape }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div class="form-row mb-4 align-items-center">
+						<div class="col-8 col-md-8">
+							<button id="id_signup_btn"
+									class="btn btn-block shadow btn-lg"
+									type="submit"
+							>Sign Up!
+							</button>
+						</div>
+						<div class="col-4 col-md-4">
+							<span class="text-center">Or <a href="{% url 'login' %}">Log in</a></span>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="col-12 col-md-3"></div>
+		</div>
+		
+	</div>
+
+
+
+
+{% endblock %}

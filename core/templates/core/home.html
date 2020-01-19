@@ -1,0 +1,120 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+
+{% block header %}
+	<link href="{% static 'mike/base/css/home.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block main_content %}
+	{% if user.is_authenticated %}
+		<div class="container" id="placeholder-for-anything-useful">
+			<div class="row">
+				<div id="user-welcome">
+					<p>
+						Welcome, {{ user }}!<br><br>
+						Brian is the laziest and hasn't built any useful functionality into this website 
+						apart from you being able to adjust your personal settings.<br><br>
+						For example, this is you're profile picture... wooptido. Feel free to change it and 
+						suffer the auto-crop which exists because I haven't yet build a js solution.<br><br>
+						One day something useful may actually be made out of this.
+					</p>
+				</div>
+			</div>
+			<div class="row">
+				<img id="user-profile-img" src="{{ user.avatar.url }}">
+			</div>
+			<div class="row" id="mike-vid-header">
+				<p>For now, please enjoy watching Michael do what he does best.</p>
+			</div>
+			<div class="row">
+				<video id="watch-michael-make" autoplay loop controls playsinline>
+					<source type="video/mp4" src="{% static 'mike/misc/37146338_1907855382614239_9145444386459353088_n.mp4' %}">
+				Your browser does not support video tag.
+				</video>
+			</div>
+			<div class="row bottom-spacer"></div>
+		</div>
+	{% else %}
+	
+	
+	
+		<div id="main-container">
+			<div id="fixer-container">
+				<div id="mike-title">
+					<span>M</span>
+					<span>I</span>
+					<span>K</span>
+					<span>E</span>
+					<span>'</span>
+					<span id="bounce">S</span>
+					<span id="break-sub-480">&nbsp;</span>
+					<span>N</span>
+					<span>I</span>
+					<span>G</span>
+					<span>H</span>
+					<span>T</span>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container">
+			<div class="row" id="mike-image-row">
+				<img id="cartoon-mike" src="{% static 'mike/misc/MikeToon.JPG' %}" />
+			</div>
+			
+			<div class="row identity-selection">
+				<div class="col-12 col-md-4 identity-subselection">
+					<div class="identity-selection-button">
+						<a href="{% url 'michael_hatheway_signup' %}">
+							<p class="question">Are you Mike?</p>
+							<p class="answer">Yes!</p>
+						</a>
+					</div>
+				</div>
+				<div class="col-12 col-md-4 identity-subselection">
+					<div class="identity-selection-button">
+						<a href="{% url 'groomsbro_signup' %}">
+							<p class="question">Are you a groomsbro?</p>
+							<p class="answer">Get your login creds!</p>
+						</a>
+					</div>
+				</div>
+				<div class="col-12 col-md-4 identity-subselection">
+					<div class="identity-selection-button">
+						<a href="{% url 'signup' %}">
+							<p class="question">Internet stranger?</p>
+							<p class="answer">Check out Mike!</p>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+				
+	{% endif %}
+{% endblock %}
+
+{% block javascript %}
+	<script>
+		function nbsp_to_br(e) {
+			if (screen.width <= 480) {
+				document.getElementById(e).innerHTML = "<br />";
+			}
+			else {
+				document.getElementById(e).innerHTML = "&nbsp;";
+			}
+		}
+		// Run on first load
+		{% if not user.is_authenticated %}
+			nbsp_to_br("break-sub-480");
+		{% endif %}
+		
+		// Run on window orientation change
+		$(window).on("orientationchange", function(event) {
+			if (!{{ user.is_authenticated|yesno:"true,false" }}) {
+				nbsp_to_br("break-sub-480");
+			}
+		});
+	</script>
+{% endblock %}

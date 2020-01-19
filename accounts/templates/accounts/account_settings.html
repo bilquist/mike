@@ -1,0 +1,74 @@
+{% extends 'accounts/accounts_base.html' %}
+{% load static %}
+
+{% block title %}Account Settings - MichaelHatheway{% endblock %}
+
+{% block header %}
+	<link href="{% static 'mike/base/css/accounts/account_settings.css' %}" rel="stylesheet">
+	<link href="{% static 'mike/base/css/accounts/account_settings_base.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block main_content %}
+	<div class="container">
+		<!-- Default form register -->
+		<div class="row text-center">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<p class="h4 text-center mt-2 mb-4 account-settings-header">Account Settings</p>
+				<form class="text-center p-2" method="POST" action="{% url 'accounts:account_settings' %}">
+					{% csrf_token %}
+					{% for field in form %}
+						{% if field.name != 'is_active' %}
+							<div class="form-row mb-4">
+								<div class="col-12 col-md-3 col-form-label text-left">{{ field.label }}</div>
+								<div class="col-12 col-md-9">
+									<input type="{{ field.field.widget.input_type }}"
+										   id="{{ field.id_for_label }}"
+										   name="{{ field.html_name }}"
+										   maxlength="{{ field.field.max_length }}"
+										   class="form-control {% if field.errors %}is-invalid{% endif %}"
+										   aria-describedby="{{ field.help_text }}"
+										   value="{{ field.value }}"
+										   {% if field.name == 'username' %}readonly{% endif %}
+										   {% if field.name == 'username' %}disabled="disabled"{% endif %}
+									>
+									<ul class="errorlist text-danger list-unstyled mb-0">
+										{% for error in field.errors %}
+											<li>{{ error|escape }}</li>
+										{% endfor %}
+									</ul>
+								</div>
+							</div>
+						{% endif %}
+					{% endfor %}
+					<div class="form-row">
+						<ul class="errorlist nonfield text-danger">
+							{% for error in form.non_field_errors %}
+								<li>{{ error|escape }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div class="form-row align-items-center mb-2">
+						<div class="col-2 col-md-2"></div>
+						<div class="col-8 col-md-8">
+							<button id="id_send_email_btn"
+									class="btn btn-block shadow btn-lg mb-4"
+									type="submit"
+									>Save</button>
+						</div>
+						<div class="col-2 col-md-2"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- Deactivate profile link -->
+		<div class="row text-center">
+			<div class="col-md-3"></div>
+			<div class="col-md-6 text-center border-top pt-2">
+				<a id="deactivate-link" href="{% url 'accounts:account_deactivation' %}">Deactivate your account</a>
+			</div>
+			<div class="col-md-3"></div>
+		</div>
+	</div>
+{% endblock %}
+
