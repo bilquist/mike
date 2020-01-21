@@ -131,19 +131,20 @@ class GroomsbroCodeForm(forms.Form):
 		if gbro is None:
 			raise ValidationError('Invalid code. Contact support if you believe this to be an error.')
 		self.username = gbro.username
+		self.code = gbro.code
 	
 	def clean(self):
 		cleaned_data = super(GroomsbroCodeForm, self).clean()
 		return cleaned_data
 	
 	def save(self, commit=True):
-		return self.username
+		return self.username, self.code
 		
 		
 class GroomsbroSignUpForm(UserCreationForm):
 	
 	tos_accepted = forms.BooleanField(initial=False, required=True)
-	session_username = forms.CharField(max_length=128, required=False)
+	session_code = forms.CharField(max_length=128, required=False)
 	field_order = ['username', 'email', 'password1', 'password2', 'sign_up_code', 'tos_accepted']
 	
 	class Meta:
@@ -188,18 +189,20 @@ class GroomsbroSignUpForm(UserCreationForm):
 			raise ValidationError(USER_MUST_ACCEPT_TOS_ERROR)
 		return tos_accepted
 	
-	def clean_session_username(self):
-		session_username = self.cleaned_data.get('session_username')
-		if session_username is None:
-			raise ValidationError('Username does not match code generated username.')
-		return session_username
+	def clean_session_code(self):
+		session_code = self.cleaned_data.get('session_code')
+		if session_code is None:
+			raise ValidationError('Access code is missing.')
+		elif GroomsbroCode.objects.filter(code__iexact=session_code).first() is None:
+			raise ValidationError('Access code is incorrect.')
+		return session_code
 	
 	def clean(self):
 		cleaned_data = super(GroomsbroSignUpForm, self).clean()
 		cleaned_username = cleaned_data.get('username')
-		session_username = cleaned_data.get('session_username')
-		if cleaned_username != session_username:
-			raise ValidationError('Username does not match code generated username.')
+		session_code = cleaned_data.get('session_code')
+		if GroomsbroCode.objects.filter(username__iexact=cleaned_username).filter(code__iexact=session_code).first() is None:
+			raise ValidationError('Username does not match access code generated username.')
 		return cleaned_data
 	
 	def save(self, commit=True):

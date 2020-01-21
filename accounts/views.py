@@ -137,7 +137,7 @@ class GroomsbroCodeSignUpView(View):
 		data = dict()
 		form = GroomsbroCodeForm(request.POST)
 		if form.is_valid():
-			data['username'] = form.save()
+			data['username'], data['code'] = form.save()
 			data['error'] = False
 			request.session['gbro_username'] = data['username']
 		else:
