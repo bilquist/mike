@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+from decouple import config
 import os
 import json
 
@@ -21,12 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ["MIKE_SECRET_KEY"]
+SECRET_KEY = config("MIKE_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("MIKE_DEBUG") == "1"
+DEBUG = config("MIKE_DEBUG") == "1"
 
-ALLOWED_HOSTS = os.environ.get("MIKE_ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = config("MIKE_ALLOWED_HOSTS", default="localhost", cast=lambda v: [s.strip() for s in v.split(',')])
 
 
 # Application definition
@@ -89,9 +90,9 @@ WSGI_APPLICATION = 'mike.wsgi.application'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql',
-		'NAME': os.environ["MIKE_POSTGRES_DB_NAME"],
-		'USER': os.environ["MIKE_POSTGRES_USERNAME"],
-		'PASSWORD': os.environ["MIKE_POSTGRES_PASSWORD"],
+		'NAME': config("MIKE_POSTGRES_DB_NAME"),
+		'USER': config("MIKE_POSTGRES_USERNAME"),
+		'PASSWORD': config("MIKE_POSTGRES_PASSWORD"),
 		'HOST': 'localhost',
 		'PORT': '',
 	}
@@ -154,35 +155,35 @@ PHONENUMBER_DB_FORMAT = 'E164'
 # Email Settings
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_SSL = True
-EMAIL_HOST = os.environ["MIKE_EMAIL_HOST"]
-EMAIL_PORT = os.environ["MIKE_EMAIL_PORT"]
-EMAIL_HOST_USER = os.environ["MIKE_EMAIL_HOST_USER"]
-EMAIL_HOST_PASSWORD = os.environ["MIKE_EMAIL_HOST_PASSWORD"]
+EMAIL_HOST = config("MIKE_EMAIL_HOST")
+EMAIL_PORT = config("MIKE_EMAIL_PORT")
+EMAIL_HOST_USER = config("MIKE_EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("MIKE_EMAIL_HOST_PASSWORD")
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 # AWS S3 Settings
-AWS_ACCESS_KEY_ID = os.environ["MIKE_AWS_ACCESS_KEY_ID"]
-AWS_SECRET_ACCESS_KEY = os.environ["MIKE_AWS_SECRET_ACCESS_KEY"]
-AWS_S3_REGION_NAME = os.environ["MIKE_AWS_S3_REGION_NAME"]
-AWS_S3_URL_PROTOCOL = os.environ["MIKE_AWS_S3_URL_PROTOCOL"]
+AWS_ACCESS_KEY_ID = config("MIKE_AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("MIKE_AWS_SECRET_ACCESS_KEY")
+AWS_S3_REGION_NAME = config("MIKE_AWS_S3_REGION_NAME")
+AWS_S3_URL_PROTOCOL = config("MIKE_AWS_S3_URL_PROTOCOL")
 
 # S3 General Files
-AWS_STORAGE_BUCKET_NAME = os.environ["MIKE_AWS_STORAGE_BUCKET_NAME"]
+AWS_STORAGE_BUCKET_NAME = config("MIKE_AWS_STORAGE_BUCKET_NAME")
 AWS_S3_CUSTOM_DOMAIN = '%s.s3-us-west-2.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-AWS_DEFAULT_ACL = None if os.environ.get("MIKE_AWS_DEFAULT_ACL") == "None" else os.environ.get("MIKE_AWS_DEFAULT_ACL")
-AWS_S3_OBJECT_PARAMETERS = json.loads(os.environ["MIKE_AWS_S3_OBJECT_PARAMETERS"].replace("\'", "\""))
+AWS_DEFAULT_ACL = None if config("MIKE_AWS_DEFAULT_ACL") == "None" else config("MIKE_AWS_DEFAULT_ACL")
+AWS_S3_OBJECT_PARAMETERS = json.loads(config("MIKE_AWS_S3_OBJECT_PARAMETERS").replace("\'", "\""))
 
 # Placeholder for media assets
-AWS_MEDIA_LOCATION = os.environ["MIKE_AWS_MEDIA_LOCATION"]
-AWS_STATIC_LOCATION = os.environ["MIKE_AWS_STATIC_LOCATION"]
+AWS_MEDIA_LOCATION = config("MIKE_AWS_MEDIA_LOCATION")
+AWS_STATIC_LOCATION = config("MIKE_AWS_STATIC_LOCATION")
 
 # CloudFront Settings
-CLOUDFRONT_URL = os.environ["MIKE_CLOUDFRONT_URL"]
-CLOUDFRONT_KEY_ID = os.environ["MIKE_CLOUDFRONT_KEY_ID"]
-CLOUDFRONT_PK_FILE_NAME = os.path.join(BASE_DIR, 'mike', os.environ["MIKE_CLOUDFRONT_PK_FILE_NAME"])
+CLOUDFRONT_URL = config("MIKE_CLOUDFRONT_URL")
+CLOUDFRONT_KEY_ID = config("MIKE_CLOUDFRONT_KEY_ID")
+CLOUDFRONT_PK_FILE_NAME = os.path.join(BASE_DIR, 'mike', config("MIKE_CLOUDFRONT_PK_FILE_NAME"))
 
 # Static files setting
 STATICFILES_DIRS = [
