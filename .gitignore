@@ -11,3 +11,4 @@ fixtures/
 secrets/
 *.pem
 *.env
+django.log
